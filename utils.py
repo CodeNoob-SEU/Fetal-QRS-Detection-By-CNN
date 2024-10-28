@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.ticker import ScalarFormatter
-
 data_root = 'dataset'
 
 
@@ -117,3 +116,7 @@ def plot_ECG_per_record(data: pd.DataFrame, smooth: bool = False, smooth_window_
 
     # 显示图表
     plt.show()
+
+def convert_to_one_hot(X,n = 2):
+    refer = np.eye(n)
+    return refer[X].T

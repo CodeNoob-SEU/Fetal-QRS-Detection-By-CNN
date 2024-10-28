@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import torch as t
+from sklearn.preprocessing import OneHotEncoder
 
 from torch.utils.data import Dataset
 from tqdm.auto import tqdm
@@ -76,25 +77,28 @@ def create_dataset() -> Tuple[ECGDataset, ECGDataset, ECGDataset]:
         test_set_feature = np.array(test_set_feature)
         test_set_label = np.array(test_set_label)
         np.save('dataset_preprocessed/test_set_feature.npy', test_set_feature)
-        np.save('dataset_preprocessed/test_set_label.npy', test_set_label)
+        np.save('dataset_preprocessed'
+                '/test_set_label.npy', test_set_label)
         print("测试集初始化完毕")
         del test_set_feature, test_set_label
 
-    train_set_feature = np.load('dataset_preprocessed/train_set_feature.npy')
-    train_set_label = np.load('dataset_preprocessed/train_set_label.npy')
+    enc = OneHotEncoder(sparse=False)
+    train_set_feature = np.load('dataset_preprocessed/train_set_feature.npy').astype(np.float32).transpose(0, 2, 1)
+    train_set_label = np.load('dataset_preprocessed/train_set_label.npy').astype(int)
     print("训练集shape:{}", train_set_feature.shape)
-    valid_set_feature = np.load('dataset_preprocessed/valid_set_feature.npy')
-    valid_set_label = np.load('dataset_preprocessed/valid_set_label.npy')
+    valid_set_feature = np.load('dataset_preprocessed/valid_set_feature.npy').astype(np.float32).transpose(0, 2, 1)
+    valid_set_label = np.load('dataset_preprocessed/train_set_label.npy').astype(int)
     print("验证集shape:{}", valid_set_feature.shape)
-    test_set_feature = np.load('dataset_preprocessed/test_set_feature.npy')
-    test_set_label = np.load('dataset_preprocessed/test_set_label.npy')
+    test_set_feature = np.load('dataset_preprocessed/test_set_feature.npy').astype(np.float32).transpose(0, 2, 1)
+    test_set_label = np.load('dataset_preprocessed/test_set_label.npy').astype(int)
     print("测试集shape:{}", test_set_feature.shape)
+
+    print(train_set_label.shape)
+    print(valid_set_label.shape)
+    print(test_set_label.shape)
 
     train_set = ECGDataset(train_set_feature, train_set_label)
     valid_set = ECGDataset(valid_set_feature, valid_set_label)
     test_set = ECGDataset(test_set_feature, None)
     print("Dataset初始化完毕")
     return train_set, valid_set, test_set
-
-
-
